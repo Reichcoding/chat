@@ -109,6 +109,10 @@ def incoming():
 def menu02(msg=''):
 	os.system('clear')
 	print(logo)
+	if 'contacts' in user:
+		pass
+	else:
+		user.add('contacts',[])
 	if msg!='':
 		print(f"{msg}".center(25))
 	print(f"Добро пожаловать, {user.data['login']}".center(25))
