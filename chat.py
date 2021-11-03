@@ -11,6 +11,25 @@ incomingM= []
 cckey = "zxcSHITczSxc81"
 server = 'http://WebJCou.pythonanywhere.com'
 
+def contacts():
+
+	os.system('clear')
+	print(logo)
+	print(f"Контакты".center(25))
+	print(f"Все, кому вы или кто вам писали".center(25))
+	print('\n\n   [0] В меню...\n_____________________________________\n')
+	
+	for i in user.data['contacts']:
+		print(f"   [{user.data['contacts'].index(i)+1}] {i}\n")
+
+	choise = input(Fore.CYAN+'\n\nВыбор: '+Fore.RESET)
+	if choise == '0':
+		menu02()
+	try:
+		send(user.data['contacts'][int(choise)-1])
+	except:
+		contacts()
+
 def send(to=None):
 	os.system('clear')
 	print(logo)
@@ -30,6 +49,11 @@ def send(to=None):
 		menu02()
 	# Ну а тут если все заебись хуярим запрос на сервак и отправляем эту ебалу
 	r = req.post(f"{server}/send",json={'login':user.data['login'],'password':user.data['password'],'to':msg_for,'msg':cc.encrypt(text,cckey)}).json()
+	if msg_for in user.data['contacts']:
+		pass
+	else:
+		user.data['contacts'].append(msg_for)
+		user.save()
 
 	menu02("Сообщение отправлено")
 def drawMsg(msg):
@@ -65,6 +89,11 @@ def incoming():
 	r = req.post(f"{server}/getlist",json={'login':user.data['login'],'password':user.data['password']}).json()
 	for i in r:
 		incomingM.append(i)
+		if i in user.data['contacts']:
+			pass
+		else:
+			user.data['contacts'].append(i)
+			user.save()
 
 	for i in incomingM:         
 		print(f'   [{incomingM.index(i)+1}] От {i}\n')
@@ -83,12 +112,14 @@ def menu02(msg=''):
 	if msg!='':
 		print(f"{msg}".center(25))
 	print(f"Добро пожаловать, {user.data['login']}".center(25))
-	print('\n\n   [1] Входящие сообщения\n   [2] Отправить сообщение')
+	print('\n\n   [1] Входящие сообщения\n   [2] Отправить сообщение\n   [3] Контакты')
 	choise = input(Fore.CYAN+'\n\nВыбор: '+Fore.RESET)
 	if choise == '1':
 		incoming()
 	elif choise=='2':
 		send()
+	elif choise=='3':
+		contacts()
 	else:
 		menu02()
 
@@ -113,6 +144,7 @@ def register(msg=''):
 	# /\ ТУт должна быть првоерка данных через сервер, но сервера нет поэтмоу ебашу в холостную 
 	user.add('login',login)
 	user.add('password',password)
+	user.add('contacts',[])
 
 	menu02();
 
@@ -136,6 +168,7 @@ def enter(msg = ''):
 	# /\ ТУт должна быть првоерка данных через сервер, но сервера нет поэтмоу ебашу в холостную 
 	user.add('login',login)
 	user.add('password',password)
+	user.add('contacts',[])
 	
 	menu02();
 
