@@ -109,7 +109,7 @@ def incoming():
 def menu02(msg=''):
 	os.system('clear')
 	print(logo)
-	if 'contacts' in user:
+	if 'contacts' in user.data:
 		pass
 	else:
 		user.add('contacts',[])
